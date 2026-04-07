@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Flots Bleus – Seafood Restaurant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0a2342;--deep-blue:#1a3a5c;--ocean:#1e5f8e;
+    --sky:#4a9eca;--aqua:#7ec8e3;--gold:#c9a84c;
+    --gold-light:#e8c97a;--white:#ffffff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--navy);font-family:'Montserrat',sans-serif;color:var(--white);}
+  .page{background:radial-gradient(ellipse at 20% 0%,rgba(74,158,202,.2) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(30,95,142,.25) 0%,transparent 50%),linear-gradient(160deg,#0a2342 0%,#0d2f55 40%,#0a1e35 100%);overflow:hidden;}
+
+  /* LANG BAR */
+  .lang-bar{position:sticky;top:0;z-index:100;background:rgba(8,25,50,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,.25);display:flex;justify-content:center;align-items:center;gap:10px;padding:12px 20px;}
+  .lang-label{font-size:1.2rem;}
+  .lang-dropdown-wrap{position:relative;display:flex;align-items:center;}
+  .lang-select{appearance:none;-webkit-appearance:none;background:linear-gradient(135deg,var(--ocean),var(--deep-blue));border:1px solid var(--gold);border-radius:50px;padding:9px 44px 9px 20px;font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:600;color:var(--gold-light);cursor:pointer;outline:none;letter-spacing:.06em;box-shadow:0 0 14px rgba(201,168,76,.15);transition:all .2s ease;}
+  .lang-select:hover{box-shadow:0 0 20px rgba(201,168,76,.28);border-color:var(--gold-light);}
+  .lang-select option{background:#0d2a47;color:var(--white);font-size:.85rem;}
+  .lang-arrow{position:absolute;right:16px;pointer-events:none;color:var(--gold-light);font-size:.75rem;}
+
+  /* TRANSLATION */
+  [data-lang]{display:none;}
+  .lang-en [data-lang="en"]{display:inline;}
+  .lang-it [data-lang="it"]{display:inline;}
+  .lang-de [data-lang="de"]{display:inline;}
+  .lang-fr [data-lang="fr"]{display:inline;}
+  .lang-es [data-lang="es"]{display:inline;}
+
+  /* HERO */
+  .hero{position:relative;height:420px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;filter:brightness(.35) saturate(.8);}
+  .hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,35,66,.3) 0%,rgba(10,35,66,.95) 100%);}
+  .hero-content{position:relative;text-align:center;z-index:2;}
+  .crab-icon{font-size:2.8rem;display:block;margin-bottom:14px;filter:drop-shadow(0 0 16px rgba(201,168,76,.6));}
+  .restaurant-name{font-family:'Playfair Display',serif;font-size:clamp(3rem,7vw,5.5rem);font-weight:700;letter-spacing:.1em;color:var(--white);text-shadow:0 4px 30px rgba(74,158,202,.5);line-height:1;}
+  .hero-subtitle{font-family:'Montserrat',sans-serif;font-size:.72rem;letter-spacing:.4em;color:var(--aqua);margin-top:12px;text-transform:uppercase;}
+  .gold-line{display:flex;align-items:center;justify-content:center;gap:16px;margin:20px auto 0;max-width:360px;}
+  .gold-line hr{flex:1;border:none;border-top:1px solid rgba(201,168,76,.45);}
+  .gold-line span{color:var(--gold);font-size:1.1rem;}
+
+  /* PHOTO STRIP */
+  .photo-strip{display:grid;grid-template-columns:repeat(4,1fr);height:200px;overflow:hidden;}
+  .photo-strip-item{position:relative;overflow:hidden;}
+  .photo-strip-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;}
+  .photo-strip-item:hover img{transform:scale(1.07);}
+  .photo-strip-item .caption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(10,35,66,.85),transparent);padding:20px 12px 10px;font-family:'Cormorant Garamond',serif;font-size:.88rem;font-style:italic;color:var(--gold-light);text-align:center;}
+  .photo-strip-item .sep{position:absolute;top:0;bottom:0;right:0;width:1px;background:rgba(201,168,76,.25);}
+
+  /* ── MARINE DECO ── */
+  /* Bubbles */
+  .bubbles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+  .bubble{position:absolute;border-radius:50%;background:rgba(126,200,227,.05);border:1px solid rgba(126,200,227,.09);animation:rise linear infinite;}
+  @keyframes rise{0%{transform:translateY(100%) scale(1);opacity:0;}10%{opacity:1;}90%{opacity:.3;}100%{transform:translateY(-120vh) scale(1.15);opacity:0;}}
+
+  /* Animated wave separator */
+  .wave-sep{width:100%;height:32px;position:relative;overflow:hidden;display:block;}
+  .wave-sep svg{position:absolute;bottom:0;width:200%;animation:wavemove 10s linear infinite;}
+  @keyframes wavemove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+  /* Marine icons row */
+  .marine-row{text-align:center;padding:8px 0 2px;font-size:.9rem;letter-spacing:.7em;opacity:.15;user-select:none;color:var(--aqua);}
+
+  /* Subtle glow corner on cards */
+  .card::after{content:'';position:absolute;bottom:0;right:0;width:70px;height:70px;background:radial-gradient(circle at 100% 100%,rgba(74,158,202,.07) 0%,transparent 70%);pointer-events:none;}
+
+  /* Anchor watermark on section header */
+  .section-header{position:relative;text-align:center;margin-bottom:38px;}
+  .section-header::before,.section-header::after{content:'⚓';font-size:.7rem;position:absolute;top:50%;transform:translateY(-50%);color:rgba(201,168,76,.18);}
+  .section-header::before{left:30px;}
+  .section-header::after{right:30px;}
+
+  /* SECTIONS */
+  .section{padding:52px 0;position:relative;}
+  .dark-band{background:rgba(0,0,0,.2);border-top:1px solid rgba(126,200,227,.12);border-bottom:1px solid rgba(126,200,227,.12);}
+  .section-sub{font-family:'Montserrat',sans-serif;font-size:.62rem;letter-spacing:.35em;text-transform:uppercase;color:var(--aqua);margin-bottom:8px;}
+  .section-title{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.9rem,4vw,2.8rem);color:var(--gold-light);text-shadow:0 2px 10px rgba(201,168,76,.3);}
+
+  /* LAYOUTS */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:1100px;margin:0 auto;padding:0 30px;}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;max-width:1200px;margin:0 auto;padding:0 30px;}
+  @media(max-width:860px){.two-col,.three-col{grid-template-columns:1fr;}}
+  @media(max-width:600px){.photo-strip{grid-template-columns:repeat(2,1fr);height:260px;}}
+
+  /* CARD */
+  .card{background:rgba(255,255,255,.04);border:1px solid rgba(126,200,227,.18);border-radius:16px;padding:28px 26px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+  .card-img-header{margin:-28px -26px 22px;height:160px;overflow:hidden;border-radius:14px 14px 0 0;position:relative;}
+  .card-img-header img{width:100%;height:100%;object-fit:cover;filter:brightness(.75);transition:transform .4s ease;}
+  .card:hover .card-img-header img{transform:scale(1.04);}
+  .card-img-header .img-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(10,35,66,.9),transparent);padding:22px 16px 10px;}
+  .card-title{font-family:'Montserrat',sans-serif;font-size:.62rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--aqua);margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+  .card-title::after{content:'';flex:1;height:1px;background:rgba(126,200,227,.25);}
+
+  /* MENU ITEMS */
+  .menu-item{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px dotted rgba(255,255,255,.07);gap:10px;}
+  .menu-item:last-child{border-bottom:none;}
+  .item-name{font-family:'Cormorant Garamond',serif;font-size:1.06rem;color:var(--white);}
+  .item-desc{font-family:'Cormorant Garamond',serif;font-size:.82rem;font-style:italic;color:rgba(200,234,245,.55);display:block;margin-top:2px;}
+  .item-price{font-family:'Montserrat',sans-serif;font-size:.87rem;font-weight:600;color:var(--gold-light);white-space:nowrap;}
+
+  /* PLATTERS */
+  .platters-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:900px;margin:0 auto;padding:0 30px;}
+  @media(max-width:600px){.platters-grid{grid-template-columns:1fr;}}
+  .platter-card{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.28);border-radius:18px;overflow:hidden;}
+  .platter-body{padding:28px 22px 22px;}
+  .platter-price-badge{display:inline-block;background:linear-gradient(135deg,var(--ocean),var(--deep-blue));border:2px solid var(--gold);border-radius:50px;padding:5px 16px;font-family:'Montserrat',sans-serif;font-size:1.15rem;font-weight:700;color:var(--gold-light);margin-bottom:12px;}
+  .platter-name{font-family:'Playfair Display',serif;font-style:italic;font-size:1.45rem;color:var(--gold-light);margin-bottom:10px;}
+  .platter-desc{font-family:'Cormorant Garamond',serif;font-size:.95rem;color:rgba(200,234,245,.72);line-height:1.6;}
+
+  /* SET MENUS */
+  .set-menu-card{background:rgba(255,255,255,.04);border:1px solid rgba(126,200,227,.22);border-radius:18px;overflow:hidden;position:relative;}
+  .set-menu-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--aqua),transparent);}
+  .set-img{height:200px;overflow:hidden;position:relative;}
+  .set-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.55);transition:transform .4s ease;}
+  .set-menu-card:hover .set-img img{transform:scale(1.04);}
+  .set-img-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 20%,rgba(10,35,66,.8) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:20px 24px;}
+  .set-price-tag{display:inline-block;background:linear-gradient(135deg,var(--ocean),var(--deep-blue));border:1px solid var(--gold);border-radius:50px;padding:4px 16px;font-family:'Montserrat',sans-serif;font-size:1.2rem;font-weight:700;color:var(--gold-light);margin-bottom:6px;align-self:flex-start;}
+  .set-menu-name{font-family:'Playfair Display',serif;font-size:1.55rem;font-style:italic;color:var(--white);}
+  .set-body{padding:22px 24px 28px;}
+  .set-note{font-family:'Cormorant Garamond',serif;font-size:.88rem;font-style:italic;color:rgba(200,234,245,.5);margin-bottom:16px;}
+  .set-section-label{font-family:'Montserrat',sans-serif;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--aqua);margin:14px 0 8px;display:flex;align-items:center;gap:8px;}
+  .set-section-label::after{content:'';flex:1;height:1px;background:rgba(126,200,227,.2);}
+  .set-items{list-style:none;}
+  .set-items li{font-family:'Cormorant Garamond',serif;font-size:1rem;color:rgba(255,255,255,.8);padding:3px 0 3px 14px;position:relative;}
+  .set-items li::before{content:'·';position:absolute;left:0;color:var(--gold);}
+
+  /* SPECIALTIES */
+  .specialty-item{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 0;border-bottom:1px dotted rgba(255,255,255,.09);gap:16px;}
+  .specialty-item:last-child{border-bottom:none;}
+  .specialty-name{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--white);margin-bottom:4px;}
+  .specialty-desc{font-family:'Cormorant Garamond',serif;font-size:.87rem;font-style:italic;color:rgba(200,234,245,.55);}
+  .specialty-price{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--gold-light);white-space:nowrap;}
+
+  /* KIDS */
+  .kids-card{background:linear-gradient(135deg,rgba(30,95,142,.35),rgba(10,35,66,.55));border:1px solid rgba(126,200,227,.28);border-radius:18px;}
+  .kids-body{padding:28px 24px 26px;}
+  .kids-price{font-family:'Montserrat',sans-serif;font-size:1.4rem;font-weight:700;color:var(--gold-light);}
+  .kids-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-style:italic;color:var(--white);}
+  .kids-age{font-size:.65rem;color:var(--aqua);letter-spacing:.2em;text-transform:uppercase;margin-bottom:14px;}
+  .tasting-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+
+  footer{text-align:center;padding:36px 20px 46px;border-top:1px solid rgba(126,200,227,.12);}
+  footer p{font-family:'Cormorant Garamond',serif;font-size:.9rem;color:rgba(200,234,245,.4);font-style:italic;}
+  .ornament{color:var(--gold);font-size:1.2rem;margin-bottom:10px;opacity:.6;}
+</style>
+</head>
+<body class="lang-en">
+<div class="page">
+
+  <!-- LANG BAR -->
+  <div class="lang-bar">
+    <span class="lang-label">🌐</span>
+    <div class="lang-dropdown-wrap">
+      <select class="lang-select" onchange="setLang(this.value)" id="lang-select">
+        <option value="en">🇬🇧 English</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="es">🇪🇸 Español</option>
+      </select>
+      <span class="lang-arrow">▾</span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <img class="hero-img" src="https://images.unsplash.com/photo-1610057099431-d73a1c9d2f2f?w=1400&q=80" alt="Seafood">
+    <div class="hero-overlay"></div>
+    <div class="bubbles">
+      <div class="bubble" style="left:6%;width:16px;height:16px;animation-duration:14s;animation-delay:0s;bottom:-30px;"></div>
+      <div class="bubble" style="left:20%;width:9px;height:9px;animation-duration:10s;animation-delay:2s;bottom:-30px;"></div>
+      <div class="bubble" style="left:35%;width:22px;height:22px;animation-duration:18s;animation-delay:1s;bottom:-30px;"></div>
+      <div class="bubble" style="left:52%;width:7px;height:7px;animation-duration:9s;animation-delay:4s;bottom:-30px;"></div>
+      <div class="bubble" style="left:65%;width:14px;height:14px;animation-duration:13s;animation-delay:0.5s;bottom:-30px;"></div>
+      <div class="bubble" style="left:78%;width:11px;height:11px;animation-duration:15s;animation-delay:3s;bottom:-30px;"></div>
+      <div class="bubble" style="left:90%;width:19px;height:19px;animation-duration:12s;animation-delay:1.5s;bottom:-30px;"></div>
+    </div>
+    <div class="hero-content">
+      <span class="crab-icon">🦀</span>
+      <h1 class="restaurant-name">LES FLOTS BLEUS</h1>
+      <p class="hero-subtitle">
+        <span data-lang="en">· Seafood Restaurant ·</span>
+        <span data-lang="fr">· Restaurant de Fruits de Mer ·</span>
+        <span data-lang="it">· Ristorante di Mare ·</span>
+        <span data-lang="de">· Meeresfrüchte Restaurant ·</span>
+        <span data-lang="es">· Restaurante de Mariscos ·</span>
+      </p>
+      <div class="gold-line"><hr><span>〜</span><hr></div>
+    </div>
+  </div>
+
+  <!-- PHOTO STRIP -->
+  <div class="photo-strip">
+    <div class="photo-strip-item">
+      <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&q=80" alt="Oysters">
+      <div class="caption"><span data-lang="en">Fresh Oysters</span><span data-lang="fr">Huîtres Fraîches</span><span data-lang="it">Ostriche Fresche</span><span data-lang="de">Frische Austern</span><span data-lang="es">Ostras Frescas</span></div>
+      <div class="sep"></div>
+    </div>
+    <div class="photo-strip-item">
+      <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500&q=80" alt="Mussels">
+      <div class="caption"><span data-lang="en">Mussels &amp; Fries</span><span data-lang="fr">Moules &amp; Frites</span><span data-lang="it">Cozze e Patatine</span><span data-lang="de">Muscheln &amp; Pommes</span><span data-lang="es">Mejillones y Patatas</span></div>
+      <div class="sep"></div>
+    </div>
+    <div class="photo-strip-item">
+      <img src="https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=500&q=80" alt="Lobster">
+      <div class="caption"><span data-lang="en">Whole Lobster</span><span data-lang="fr">Homard Entier</span><span data-lang="it">Aragosta Intera</span><span data-lang="de">Ganzer Hummer</span><span data-lang="es">Langosta Entera</span></div>
+      <div class="sep"></div>
+    </div>
+    <div class="photo-strip-item">
+      <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&q=80" alt="Grilled Fish">
+      <div class="caption"><span data-lang="en">Grilled Fish</span><span data-lang="fr">Poisson Grillé</span><span data-lang="it">Pesce alla Griglia</span><span data-lang="de">Gegrillter Fisch</span><span data-lang="es">Pescado a la Plancha</span></div>
+    </div>
+  </div>
+
+  <!-- Wave divider -->
+  <div class="wave-sep">
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 16 C180 32 360 0 540 16 C720 32 900 0 1080 16 C1260 32 1440 0 1440 16 L1440 32 L0 32 Z" fill="rgba(126,200,227,0.07)"/>
+      <path d="M0 20 C180 36 360 4 540 20 C720 36 900 4 1080 20 C1260 36 1440 4 1440 20" stroke="rgba(126,200,227,0.12)" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+  <div class="marine-row">🐚 🐟 ⚓ 🐠 🦀 🐡 ⚓ 🐟 🐚</div>
+
+
+  <!-- Wave divider -->
+  <div class="wave-sep">
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 16 C180 32 360 0 540 16 C720 32 900 0 1080 16 C1260 32 1440 0 1440 16 L1440 32 L0 32 Z" fill="rgba(201,168,76,0.08)"/>
+    </svg>
+  </div>
+
+  <!-- ═══ CHEF RECOMMENDATIONS ═══ -->
+  <section class="section" style="padding:40px 0;">
+    <div class="section-header">
+      <p class="section-sub">· 👨‍🍳 ·</p>
+      <h2 class="section-title">
+        <span data-lang="en">Chef's Recommendations</span>
+        <span data-lang="fr">Recommandations du Chef</span>
+        <span data-lang="it">Consigli dello Chef</span>
+        <span data-lang="de">Empfehlungen des Küchenchefs</span>
+        <span data-lang="es">Recomendaciones del Chef</span>
+      </h2>
+    </div>
+
+    <div style="max-width:1100px;margin:0 auto;padding:0 30px;">
+
+      <!-- TOP BANNER -->
+      <div style="background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(30,95,142,.2));border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:28px 32px;margin-bottom:28px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);"></div>
+        <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;color:rgba(200,234,245,.7);text-align:center;line-height:1.7;">
+          <span data-lang="en">"Our parrilladas are the heart of our kitchen — generous grills of the freshest catch, cooked to perfection over the open flame."</span>
+          <span data-lang="fr">"Nos parrilladas sont le cœur de notre cuisine — des grillades généreuses des produits les plus frais, cuites à la perfection sur la flamme vive."</span>
+          <span data-lang="it">"Le nostre parrilladas sono il cuore della nostra cucina — grigliate generose dei prodotti più freschi, cotte alla perfezione sulla fiamma viva."</span>
+          <span data-lang="de">"Unsere Parrilladas sind das Herzstück unserer Küche — großzügige Grillgerichte aus den frischesten Zutaten, perfekt auf offener Flamme zubereitet."</span>
+          <span data-lang="es">"Nuestras parrilladas son el corazón de nuestra cocina — generosas parrillas de los productos más frescos, cocinadas a la perfección sobre la llama viva."</span>
+        </p>
+        <p style="font-family:'Montserrat',sans-serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-align:center;margin-top:12px;text-transform:uppercase;">— Le Chef</p>
+      </div>
+
+      <!-- THREE PARRILLADAS -->
+      <div class="three-col" style="padding:0;">
+
+        <!-- SEAFOOD PARRILLADA -->
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.3);border-radius:18px;overflow:hidden;position:relative;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--gold));"></div>
+          <div style="padding:28px 24px;">
+            <div style="font-size:2rem;margin-bottom:10px;text-align:center;">🦑</div>
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.35rem;color:var(--gold-light);text-align:center;margin-bottom:6px;">
+              <span data-lang="en">Seafood Grill</span>
+              <span data-lang="fr">Parrillada de Fruits de Mer</span>
+              <span data-lang="it">Grigliata di Mare</span>
+              <span data-lang="de">Meeresfrüchte-Grill</span>
+              <span data-lang="es">Parrillada de Mariscos</span>
+            </div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-style:italic;color:rgba(200,234,245,.6);text-align:center;margin-bottom:16px;line-height:1.6;">
+              <span data-lang="en">Baby squid, cuttlefish, calamari, gambas,<br>mussels, razor clams, rice + vegetables</span>
+              <span data-lang="fr">Soupion, seiches, calamars, gambas,<br>moules, couteaux, riz + légumes</span>
+              <span data-lang="it">Seppioline, seppie, calamari, gamberi,<br>cozze, cannolicchi, riso + verdure</span>
+              <span data-lang="de">Sepien, Tintenfisch, Calamari, Gambas,<br>Muscheln, Schwertmuscheln, Reis + Gemüse</span>
+              <span data-lang="es">Chopitos, sepia, calamares, gambas,<br>mejillones, navajas, arroz + verduras</span>
+            </div>
+            <div style="text-align:center;background:linear-gradient(135deg,var(--ocean),var(--deep-blue));border:1px solid var(--gold);border-radius:50px;padding:8px 20px;font-family:'Montserrat',sans-serif;font-size:1.2rem;font-weight:700;color:var(--gold-light);">€25.90</div>
+          </div>
+        </div>
+
+        <!-- FISH PARRILLADA -->
+        <div style="background:rgba(255,255,255,.05);border:2px solid rgba(201,168,76,.5);border-radius:18px;overflow:hidden;position:relative;transform:scale(1.02);box-shadow:0 8px 32px rgba(201,168,76,.12);">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));"></div>
+          <div style="position:absolute;top:14px;right:14px;background:var(--gold);color:var(--navy);font-family:'Montserrat',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.15em;padding:4px 10px;border-radius:50px;text-transform:uppercase;">
+            <span data-lang="en">Chef's Choice</span>
+            <span data-lang="fr">Choix du Chef</span>
+            <span data-lang="it">Scelta dello Chef</span>
+            <span data-lang="de">Chef's Wahl</span>
+            <span data-lang="es">Elección del Chef</span>
+          </div>
+          <div style="padding:28px 24px;">
+            <div style="font-size:2rem;margin-bottom:10px;text-align:center;">🐟</div>
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.35rem;color:var(--gold-light);text-align:center;margin-bottom:6px;">
+              <span data-lang="en">Fish Grill</span>
+              <span data-lang="fr">Parrillada de Poissons</span>
+              <span data-lang="it">Grigliata di Pesce</span>
+              <span data-lang="de">Fisch-Grill</span>
+              <span data-lang="es">Parrillada de Pescado</span>
+            </div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-style:italic;color:rgba(200,234,245,.6);text-align:center;margin-bottom:16px;line-height:1.6;">
+              <span data-lang="en">Red mullet, sea bream fillet, tuna steak,<br>gambas, mussels, shrimp, rice + vegetables</span>
+              <span data-lang="fr">Filet de rouget, filet de daurade, steak de thon,<br>gambas, moules, crevettes, riz + légumes</span>
+              <span data-lang="it">Triglia, filetto di orata, bistecca di tonno,<br>gamberi, cozze, gamberetti, riso + verdure</span>
+              <span data-lang="de">Rotbarbe, Doradenfilet, Thunfischsteak,<br>Gambas, Muscheln, Garnelen, Reis + Gemüse</span>
+              <span data-lang="es">Salmonete, filete de dorada, filete de atún,<br>gambas, mejillones, camarones, arroz + verduras</span>
+            </div>
+            <div style="text-align:center;background:linear-gradient(135deg,var(--gold),#b8860b);border-radius:50px;padding:8px 20px;font-family:'Montserrat',sans-serif;font-size:1.2rem;font-weight:700;color:var(--navy);">€26.90</div>
+          </div>
+        </div>
+
+        <!-- MEAT PARRILLADA -->
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.3);border-radius:18px;overflow:hidden;position:relative;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--aqua));"></div>
+          <div style="padding:28px 24px;">
+            <div style="font-size:2rem;margin-bottom:10px;text-align:center;">🥩</div>
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.35rem;color:var(--gold-light);text-align:center;margin-bottom:6px;">
+              <span data-lang="en">Meat Grill</span>
+              <span data-lang="fr">Parrillada de Viandes</span>
+              <span data-lang="it">Grigliata di Carne</span>
+              <span data-lang="de">Fleisch-Grill</span>
+              <span data-lang="es">Parrillada de Carnes</span>
+            </div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-style:italic;color:rgba(200,234,245,.6);text-align:center;margin-bottom:16px;line-height:1.6;">
+              <span data-lang="en">Bull, beef, duck breast,<br>fries + salad</span>
+              <span data-lang="fr">Taureau, bœuf, magret de canard,<br>frites + salade</span>
+              <span data-lang="it">Toro, manzo, petto d'anatra,<br>patatine + insalata</span>
+              <span data-lang="de">Stier, Rind, Entenbrust,<br>Pommes + Salat</span>
+              <span data-lang="es">Toro, ternera, magret de pato,<br>patatas fritas + ensalada</span>
+            </div>
+            <div style="text-align:center;background:linear-gradient(135deg,var(--ocean),var(--deep-blue));border:1px solid var(--gold);border-radius:50px;padding:8px 20px;font-family:'Montserrat',sans-serif;font-size:1.2rem;font-weight:700;color:var(--gold-light);">€23.50</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave divider -->
+  <div class="wave-sep">
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 16 C180 0 360 32 540 16 C720 0 900 32 1080 16 C1260 0 1440 32 1440 16 L1440 32 L0 32 Z" fill="rgba(126,200,227,0.06)"/>
+    </svg>
+  </div>
+  <div class="marine-row">🐚 🐟 ⚓ 🐠 🦀 🐡 ⚓ 🐟 🐚</div>
+
+  <!-- ═══ À LA CARTE ═══ -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-sub">· Menu ·</p>
+      <h2 class="section-title">
+        <span data-lang="en">À la Carte</span><span data-lang="fr">À la Carte</span>
+        <span data-lang="it">Alla Carta</span><span data-lang="de">À la Carte</span>
+        <span data-lang="es">À la Carta</span>
+      </h2>
+    </div>
+    <div class="two-col">
+
+      <!-- STARTERS -->
+      <div class="card">
+        <div class="card-img-header">
+          <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=700&q=80" alt="Starters">
+          <div class="img-label">
+            <div class="card-title">🦪
+              <span data-lang="en">Starters</span><span data-lang="fr">Entrées</span>
+              <span data-lang="it">Antipasti</span><span data-lang="de">Vorspeisen</span>
+              <span data-lang="es">Entrantes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Fried Calamari</span><span data-lang="fr">Calamars Frits</span>
+          <span data-lang="it">Calamari Fritti</span><span data-lang="de">Frittierte Tintenfischringe</span>
+          <span data-lang="es">Calamares Fritos</span>
+        </span></div><span class="item-price">€13.90</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Grilled Calamari</span><span data-lang="fr">Calamars à la Plancha</span>
+          <span data-lang="it">Calamari alla Griglia</span><span data-lang="de">Gegrillte Tintenfischringe</span>
+          <span data-lang="es">Calamares a la Plancha</span>
+        </span></div><span class="item-price">€16.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Clams in Garlic Cream</span><span data-lang="fr">Tellines à la Crème d'Ail</span>
+          <span data-lang="it">Vongole alla Crema d'Aglio</span><span data-lang="de">Venusmuscheln in Knoblauchsahne</span>
+          <span data-lang="es">Almejas a la Crema de Ajo</span>
+        </span></div><span class="item-price">€16.90</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Baked Mussels</span><span data-lang="fr">Moules Gratinées</span>
+          <span data-lang="it">Cozze Gratinate</span><span data-lang="de">Überbackene Muscheln</span>
+          <span data-lang="es">Mejillones Gratinados</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Butter, garlic, parsley, breadcrumbs</span>
+          <span data-lang="fr">Beurre, ail, persil, chapelure</span>
+          <span data-lang="it">Burro, aglio, prezzemolo, pangrattato</span>
+          <span data-lang="de">Butter, Knoblauch, Petersilie, Semmelbrösel</span>
+          <span data-lang="es">Mantequilla, ajo, perejil, pan rallado</span>
+        </span></div><span class="item-price">€16.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Grilled Baby Squid</span><span data-lang="fr">Soupions à la Plancha</span>
+          <span data-lang="it">Seppioline alla Griglia</span><span data-lang="de">Gegrillte Sepien</span>
+          <span data-lang="es">Chopitos a la Plancha</span>
+        </span></div><span class="item-price">€16.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Fish Soup</span><span data-lang="fr">Soupe de Poisson</span>
+          <span data-lang="it">Zuppa di Pesce</span><span data-lang="de">Fischsuppe</span>
+          <span data-lang="es">Sopa de Pescado</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Grated cheese, grilled bread, garlic, rouille</span>
+          <span data-lang="fr">Fromage râpé, pain grillé, ail, rouille</span>
+          <span data-lang="it">Formaggio grattugiato, pane grigliato, aglio, rouille</span>
+          <span data-lang="de">Geriebener Käse, geröstetes Brot, Knoblauch, Rouille</span>
+          <span data-lang="es">Queso rallado, pan tostado, ajo, rouille</span>
+        </span></div><span class="item-price">€14.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Shrimp Bouquet</span><span data-lang="fr">Bouquet de Crevettes</span>
+          <span data-lang="it">Bouquet di Gamberi</span><span data-lang="de">Garnelen-Bouquet</span>
+          <span data-lang="es">Bouquet de Gambas</span>
+        </span></div><span class="item-price">€16.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Whelk Plate</span><span data-lang="fr">Assiette de Bulots</span>
+          <span data-lang="it">Piatto di Lumache di Mare</span><span data-lang="de">Wellhornschnecken-Teller</span>
+          <span data-lang="es">Plato de Caracoles de Mar</span>
+        </span></div><span class="item-price">€13.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Small Seafood Platter</span><span data-lang="fr">Petit Plateau de Fruits de Mer</span>
+          <span data-lang="it">Piccolo Plateau di Mare</span><span data-lang="de">Kleines Meeresfrüchte-Plateau</span>
+          <span data-lang="es">Pequeño Plateau de Mariscos</span>
+        </span><span class="item-desc">
+          <span data-lang="en">6 oysters, 6 whelks, 6 shrimp, 6 mussels, clams</span>
+          <span data-lang="fr">6 huîtres, 6 bulots, 6 crevettes, 6 moules, tellines</span>
+          <span data-lang="it">6 ostriche, 6 lumache, 6 gamberi, 6 cozze, vongole</span>
+          <span data-lang="de">6 Austern, 6 Wellhornschnecken, 6 Garnelen, 6 Muscheln, Venusmuscheln</span>
+          <span data-lang="es">6 ostras, 6 caracoles, 6 gambas, 6 mejillones, almejas</span>
+        </span></div><span class="item-price">€32.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Fries or Camargue Rice</span><span data-lang="fr">Frites ou Riz de Camargue</span>
+          <span data-lang="it">Patatine o Riso della Camargue</span><span data-lang="de">Pommes oder Camargue-Reis</span>
+          <span data-lang="es">Patatas Fritas o Arroz de Camarga</span>
+        </span></div><span class="item-price">€5.50</span></div>
+      </div>
+
+      <!-- SALADS + EXPRESS -->
+      <div>
+        <div class="card" style="margin-bottom:22px;">
+          <div class="card-img-header">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=700&q=80" alt="Salads">
+            <div class="img-label">
+              <div class="card-title">🥗
+                <span data-lang="en">Salads</span><span data-lang="fr">Salades</span>
+                <span data-lang="it">Insalate</span><span data-lang="de">Salate</span>
+                <span data-lang="es">Ensaladas</span>
+              </div>
+            </div>
+          </div>
+          <div class="menu-item"><div><span class="item-name">
+            <span data-lang="en">Green Salad</span><span data-lang="fr">Salade Verte</span>
+            <span data-lang="it">Insalata Verde</span><span data-lang="de">Grüner Salat</span>
+            <span data-lang="es">Ensalada Verde</span>
+          </span><span class="item-desc">
+            <span data-lang="en">Lettuce, tomatoes, onions, olive</span>
+            <span data-lang="fr">Salade, tomates, oignons, olive</span>
+            <span data-lang="it">Lattuga, pomodori, cipolle, olive</span>
+            <span data-lang="de">Salat, Tomaten, Zwiebeln, Oliven</span>
+            <span data-lang="es">Lechuga, tomates, cebollas, aceitunas</span>
+          </span></div><span class="item-price">€10.50</span></div>
+
+          <div class="menu-item"><div><span class="item-name">
+            <span data-lang="en">Composed Salad</span><span data-lang="fr">Salade Composée</span>
+            <span data-lang="it">Insalata Composta</span><span data-lang="de">Gemischter Salat</span>
+            <span data-lang="es">Ensalada Compuesta</span>
+          </span><span class="item-desc">
+            <span data-lang="en">Rice, tuna, crudités, olive, corn</span>
+            <span data-lang="fr">Riz, thon, crudités, olive, maïs</span>
+            <span data-lang="it">Riso, tonno, crudités, olive, mais</span>
+            <span data-lang="de">Reis, Thunfisch, Rohkost, Oliven, Mais</span>
+            <span data-lang="es">Arroz, atún, crudités, aceitunas, maíz</span>
+          </span></div><span class="item-price">€15.50</span></div>
+
+          <div class="menu-item"><div><span class="item-name">
+            <span data-lang="en">Sea Salad</span><span data-lang="fr">Salade de la Mer</span>
+            <span data-lang="it">Insalata del Mare</span><span data-lang="de">Meeres-Salat</span>
+            <span data-lang="es">Ensalada del Mar</span>
+          </span><span class="item-desc">
+            <span data-lang="en">Crudités, mussels, seafood, hard-boiled egg, olive</span>
+            <span data-lang="fr">Crudités, moules, fruits de mer, œuf dur, olive</span>
+            <span data-lang="it">Crudités, cozze, frutti di mare, uovo sodo, olive</span>
+            <span data-lang="de">Rohkost, Muscheln, Meeresfrüchte, hartgekochtes Ei, Oliven</span>
+            <span data-lang="es">Crudités, mejillones, mariscos, huevo duro, aceitunas</span>
+          </span></div><span class="item-price">€16.50</span></div>
+
+          <div class="menu-item"><div><span class="item-name">
+            <span data-lang="en">Caesar Salad</span><span data-lang="fr">Salade César</span>
+            <span data-lang="it">Insalata Caesar</span><span data-lang="de">Caesar Salat</span>
+            <span data-lang="es">Ensalada César</span>
+          </span><span class="item-desc">
+            <span data-lang="en">Onions, tomatoes, croutons, egg, olive, chicken, parmesan</span>
+            <span data-lang="fr">Oignons, tomates, croûtons, œuf, olive, poulet, parmesan</span>
+            <span data-lang="it">Cipolle, pomodori, crostini, uovo, olive, pollo, parmigiano</span>
+            <span data-lang="de">Zwiebeln, Tomaten, Croutons, Ei, Oliven, Hähnchen, Parmesan</span>
+            <span data-lang="es">Cebollas, tomates, picatostes, huevo, aceitunas, pollo, parmesano</span>
+          </span></div><span class="item-price">€14.90</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">⚡
+            <span data-lang="en">Express Dishes</span><span data-lang="fr">Plats Express</span>
+            <span data-lang="it">Piatti Veloci</span><span data-lang="de">Schnellgerichte</span>
+            <span data-lang="es">Platos Rápidos</span>
+          </div>
+          <div class="menu-item"><div><span class="item-name">
+            <span data-lang="en">Mussels &amp; Fries</span><span data-lang="fr">Moules Frites</span>
+            <span data-lang="it">Cozze e Patatine</span><span data-lang="de">Muscheln &amp; Pommes</span>
+            <span data-lang="es">Mejillones y Patatas Fritas</span>
+          </span><span class="item-desc">
+            <span data-lang="en">Curry, Roquefort, Garlic Cream or Marinière</span>
+            <span data-lang="fr">Curry, Roquefort, Crème d'Ail ou Marinière</span>
+            <span data-lang="it">Curry, Roquefort, Crema d'Aglio o Marinara</span>
+            <span data-lang="de">Curry, Roquefort, Knoblauchsahne oder Marinière</span>
+            <span data-lang="es">Curry, Roquefort, Crema de Ajo o Marinera</span>
+          </span></div><span class="item-price">€15.50</span></div>
+          <div class="menu-item"><div><span class="item-name">
+            <span data-lang="en">Seafood Paella</span><span data-lang="fr">Paella aux Fruits de Mer</span>
+            <span data-lang="it">Paella di Mare</span><span data-lang="de">Meeresfrüchte-Paella</span>
+            <span data-lang="es">Paella de Mariscos</span>
+          </span><span class="item-desc">
+            <span data-lang="en">Mussels, shrimp, squid, rice, peas</span>
+            <span data-lang="fr">Moules, crevettes, calamars, riz, petits pois</span>
+            <span data-lang="it">Cozze, gamberi, calamari, riso, piselli</span>
+            <span data-lang="de">Muscheln, Garnelen, Tintenfisch, Reis, Erbsen</span>
+            <span data-lang="es">Mejillones, gambas, calamares, arroz, guisantes</span>
+          </span></div><span class="item-price">€16.50</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave divider -->
+  <div class="wave-sep">
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 16 C180 0 360 32 540 16 C720 0 900 32 1080 16 C1260 0 1440 32 1440 16 L1440 32 L0 32 Z" fill="rgba(126,200,227,0.06)"/>
+      <path d="M0 12 C180 -4 360 28 540 12 C720 -4 900 28 1080 12 C1260 -4 1440 28 1440 12" stroke="rgba(201,168,76,0.1)" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- ═══ MAIN COURSES ═══ -->
+  <section class="section dark-band">
+    <div class="section-header">
+      <p class="section-sub">·&nbsp;<span data-lang="en">Mains</span><span data-lang="fr">Plats</span><span data-lang="it">Secondi</span><span data-lang="de">Hauptgerichte</span><span data-lang="es">Platos</span>&nbsp;·</p>
+      <h2 class="section-title">
+        <span data-lang="en">Main Courses</span><span data-lang="fr">Nos Plats</span>
+        <span data-lang="it">Piatti Principali</span><span data-lang="de">Hauptgerichte</span>
+        <span data-lang="es">Platos Principales</span>
+      </h2>
+    </div>
+    <div class="three-col">
+
+      <!-- PASTA + MEAT -->
+      <div class="card">
+        <div class="card-title">🍝 Pasta</div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Seafood Spaghetti</span><span data-lang="fr">Spaghettis aux Fruits de Mer</span>
+          <span data-lang="it">Spaghetti ai Frutti di Mare</span><span data-lang="de">Meeresfrüchte-Spaghetti</span>
+          <span data-lang="es">Espaguetis con Mariscos</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Mussels, shrimp, squid, cherry tomato sauce</span>
+          <span data-lang="fr">Moules, crevettes, calamars, sauce tomate</span>
+          <span data-lang="it">Cozze, gamberi, calamari, salsa di pomodorini</span>
+          <span data-lang="de">Muscheln, Garnelen, Tintenfisch, Kirschtomatensauce</span>
+          <span data-lang="es">Mejillones, gambas, calamares, salsa de tomate cherry</span>
+        </span></div><span class="item-price">€15.90</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Spaghetti Bolognese</span><span data-lang="fr">Spaghettis à la Bolognaise</span>
+          <span data-lang="it">Spaghetti alla Bolognese</span><span data-lang="de">Spaghetti Bolognese</span>
+          <span data-lang="es">Espaguetis a la Boloñesa</span>
+        </span></div><span class="item-price">€14.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Spaghetti with Clams</span><span data-lang="fr">Spaghettis aux Tellines</span>
+          <span data-lang="it">Spaghetti alle Vongole</span><span data-lang="de">Spaghetti mit Venusmuscheln</span>
+          <span data-lang="es">Espaguetis con Almejas</span>
+        </span><span class="item-desc">
+          <span data-lang="en">White wine, parsley</span><span data-lang="fr">Vin blanc, persil</span>
+          <span data-lang="it">Vino bianco, prezzemolo</span><span data-lang="de">Weißwein, Petersilie</span>
+          <span data-lang="es">Vino blanco, perejil</span>
+        </span></div><span class="item-price">€18.50</span></div>
+
+        <div class="card-title" style="margin-top:22px;">🥩
+          <span data-lang="en">Meat</span><span data-lang="fr">Viandes</span>
+          <span data-lang="it">Carne</span><span data-lang="de">Fleisch</span>
+          <span data-lang="es">Carnes</span>
+        </div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Bull Rib Steak 300g/350g</span><span data-lang="fr">Côtes de Taureau 300g/350g</span>
+          <span data-lang="it">Costata di Toro 300g/350g</span><span data-lang="de">Stierrippe 300g/350g</span>
+          <span data-lang="es">Costilla de Toro 300g/350g</span>
+        </span></div><span class="item-price">€21.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Entrecôte Steak 220g/250g</span><span data-lang="fr">Entrecôte 220g/250g</span>
+          <span data-lang="it">Entrecote 220g/250g</span><span data-lang="de">Entrecôte 220g/250g</span>
+          <span data-lang="es">Entrecot 220g/250g</span>
+        </span></div><span class="item-price">€19.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Duck Breast 300g/350g</span><span data-lang="fr">Magret de Canard 300g/350g</span>
+          <span data-lang="it">Petto d'Anatra 300g/350g</span><span data-lang="de">Entenbrust 300g/350g</span>
+          <span data-lang="es">Magret de Pato 300g/350g</span>
+        </span></div><span class="item-price">€21.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Bull Stew</span><span data-lang="fr">Gardianne de Taureau</span>
+          <span data-lang="it">Spezzatino di Toro</span><span data-lang="de">Stier-Eintopf</span>
+          <span data-lang="es">Estofado de Toro</span>
+        </span></div><span class="item-price">€15.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name" style="font-size:.85rem;color:rgba(200,234,245,.55);">
+          <span data-lang="en">Sauce supplement</span><span data-lang="fr">Supplément sauce</span>
+          <span data-lang="it">Supplemento salsa</span><span data-lang="de">Saucen-Zuschlag</span>
+          <span data-lang="es">Suplemento salsa</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Roquefort, pepper or curry</span><span data-lang="fr">Roquefort, poivre ou curry</span>
+          <span data-lang="it">Roquefort, pepe o curry</span><span data-lang="de">Roquefort, Pfeffer oder Curry</span>
+          <span data-lang="es">Roquefort, pimienta o curry</span>
+        </span></div><span class="item-price" style="font-size:.78rem;">+€2.50</span></div>
+      </div>
+
+      <!-- GRILLED FISH -->
+      <div class="card">
+        <div class="card-img-header">
+          <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=700&q=80" alt="Grilled Fish">
+          <div class="img-label">
+            <div class="card-title">🐟
+              <span data-lang="en">Grilled Fish</span><span data-lang="fr">Poissons à la Plancha</span>
+              <span data-lang="it">Pesce alla Griglia</span><span data-lang="de">Gegrillter Fisch</span>
+              <span data-lang="es">Pescados a la Plancha</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Fish Skewer</span><span data-lang="fr">Brochette de Poissons</span>
+          <span data-lang="it">Spiedino di Pesce</span><span data-lang="de">Fischspieß</span>
+          <span data-lang="es">Brocheta de Pescado</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Tuna, swordfish, salmon</span><span data-lang="fr">Thon, espadon, saumon</span>
+          <span data-lang="it">Tonno, pesce spada, salmone</span><span data-lang="de">Thunfisch, Schwertfisch, Lachs</span>
+          <span data-lang="es">Atún, pez espada, salmón</span>
+        </span></div><span class="item-price">€17.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Whole Sea Bream 300–400g</span><span data-lang="fr">Daurade Entière 300–400g</span>
+          <span data-lang="it">Orata Intera 300–400g</span><span data-lang="de">Ganze Dorade 300–400g</span>
+          <span data-lang="es">Dorada Entera 300–400g</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Subject to availability</span><span data-lang="fr">Selon arrivage</span>
+          <span data-lang="it">Secondo disponibilità</span><span data-lang="de">Je nach Verfügbarkeit</span>
+          <span data-lang="es">Según disponibilidad</span>
+        </span></div><span class="item-price">€19.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Whole Sea Bass 300–400g</span><span data-lang="fr">Loup Entier 300–400g</span>
+          <span data-lang="it">Branzino Intero 300–400g</span><span data-lang="de">Ganzer Wolfsbarsch 300–400g</span>
+          <span data-lang="es">Lubina Entera 300–400g</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Subject to availability</span><span data-lang="fr">Selon arrivage</span>
+          <span data-lang="it">Secondo disponibilità</span><span data-lang="de">Je nach Verfügbarkeit</span>
+          <span data-lang="es">Según disponibilidad</span>
+        </span></div><span class="item-price">€19.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Baked Scallops</span><span data-lang="fr">Coquilles St-Jacques Gratinées</span>
+          <span data-lang="it">Capesante Gratinate</span><span data-lang="de">Überbackene Jakobsmuscheln</span>
+          <span data-lang="es">Vieiras Gratinadas</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Garlic, parsley, cream, Champagne</span><span data-lang="fr">Ail, persil, crème, Champagne</span>
+          <span data-lang="it">Aglio, prezzemolo, panna, Champagne</span><span data-lang="de">Knoblauch, Petersilie, Sahne, Champagner</span>
+          <span data-lang="es">Ajo, perejil, nata, Champán</span>
+        </span></div><span class="item-price">€23.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Grilled Cuttlefish</span><span data-lang="fr">Seiches à la Plancha</span>
+          <span data-lang="it">Seppie alla Griglia</span><span data-lang="de">Gegrillte Tintenfische</span>
+          <span data-lang="es">Sepia a la Plancha</span>
+        </span></div><span class="item-price">€18.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Sole Meunière</span><span data-lang="fr">Sole Meunière Grillée</span>
+          <span data-lang="it">Sogliola alla Mugnaia</span><span data-lang="de">Seezunge Meunière</span>
+          <span data-lang="es">Lenguado a la Meunière</span>
+        </span></div><span class="item-price">€22.90</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Aioli Cod + Dessert</span><span data-lang="fr">Aïoli de Morue + Dessert</span>
+          <span data-lang="it">Baccalà all'Aioli + Dolce</span><span data-lang="de">Kabeljau Aioli + Dessert</span>
+          <span data-lang="es">Bacalao al Alioli + Postre</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Carrots, steamed potato, whelk, egg</span>
+          <span data-lang="fr">Carotte, pomme vapeur, bulot, œuf dur</span>
+          <span data-lang="it">Carote, patate al vapore, lumache, uovo</span>
+          <span data-lang="de">Karotten, Dampfkartoffeln, Wellhornschnecke, Ei</span>
+          <span data-lang="es">Zanahoria, patata al vapor, caracol de mar, huevo</span>
+        </span></div><span class="item-price">€18.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Chef's Prawns</span><span data-lang="fr">Gambas du Chef</span>
+          <span data-lang="it">Gamberi del Chef</span><span data-lang="de">Gambas des Küchenchefs</span>
+          <span data-lang="es">Gambas del Chef</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Flambéed with Pastis</span><span data-lang="fr">Flambées au Pastis</span>
+          <span data-lang="it">Flambati al Pastis</span><span data-lang="de">Flambiert mit Pastis</span>
+          <span data-lang="es">Flameadas con Pastis</span>
+        </span></div><span class="item-price">€21.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Whole Lobster 300–400g</span><span data-lang="fr">Homard Entier 300–400g</span>
+          <span data-lang="it">Aragosta Intera 300–400g</span><span data-lang="de">Ganzer Hummer 300–400g</span>
+          <span data-lang="es">Langosta Entera 300–400g</span>
+        </span></div><span class="item-price">€23.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Small Bouillabaisse + Dessert</span><span data-lang="fr">Petite Bouillabaisse + Dessert</span>
+          <span data-lang="it">Piccola Bouillabaisse + Dolce</span><span data-lang="de">Kleine Bouillabaisse + Dessert</span>
+          <span data-lang="es">Pequeña Bullabesa + Postre</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Fish, gambas, mussel, shrimp, whelk, crouton, rouille</span>
+          <span data-lang="fr">Filet de poisson, gambas, moule, crevette, bulot, croûton, rouille</span>
+          <span data-lang="it">Pesce, gamberi, cozze, gamberetti, lumache, crostini, rouille</span>
+          <span data-lang="de">Fisch, Gambas, Muscheln, Garnelen, Wellhornschnecke, Crouton, Rouille</span>
+          <span data-lang="es">Pescado, gambas, mejillón, camarón, caracol, crutón, rouille</span>
+        </span></div><span class="item-price">€20.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Small Marmite + Dessert</span><span data-lang="fr">Petite Marmite + Dessert</span>
+          <span data-lang="it">Piccola Marmite + Dolce</span><span data-lang="de">Kleine Marmite + Dessert</span>
+          <span data-lang="es">Pequeña Marmita + Postre</span>
+        </span><span class="item-desc">
+          <span data-lang="en">Fish, gambas, mussel, shrimp, crouton, rouille</span>
+          <span data-lang="fr">Filet de poisson, gambas, moule, crevette, croûton, rouille</span>
+          <span data-lang="it">Pesce, gamberi, cozze, gamberetti, crostini, rouille</span>
+          <span data-lang="de">Fisch, Gambas, Muscheln, Garnelen, Crouton, Rouille</span>
+          <span data-lang="es">Pescado, gambas, mejillón, camarón, crutón, rouille</span>
+        </span></div><span class="item-price">€19.50</span></div>
+      </div>
+
+      <!-- TASTING -->
+      <div class="card">
+        <div class="card-img-header">
+          <img src="https://images.unsplash.com/photo-1610057099431-d73a1c9d2f2f?w=700&q=80" alt="Tasting">
+          <div class="img-label">
+            <div class="card-title">✨
+              <span data-lang="en">Tasting</span><span data-lang="fr">Dégustation</span>
+              <span data-lang="it">Degustazione</span><span data-lang="de">Verkostung</span>
+              <span data-lang="es">Degustación</span>
+            </div>
+          </div>
+        </div>
+        <div class="tasting-grid">
+          <div class="menu-item" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="item-name" style="font-size:.93rem;"><span data-lang="en">12 Raw Mussels</span><span data-lang="fr">12 Moules Crues</span><span data-lang="it">12 Cozze Crude</span><span data-lang="de">12 Rohe Muscheln</span><span data-lang="es">12 Mejillones Crudos</span></span><span class="item-price">€11.00</span></div>
+          <div class="menu-item" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="item-name" style="font-size:.93rem;"><span data-lang="en">6 Oysters</span><span data-lang="fr">6 Huîtres</span><span data-lang="it">6 Ostriche</span><span data-lang="de">6 Austern</span><span data-lang="es">6 Ostras</span></span><span class="item-price">€11.50</span></div>
+          <div class="menu-item" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="item-name" style="font-size:.93rem;"><span data-lang="en">12 Oysters</span><span data-lang="fr">12 Huîtres</span><span data-lang="it">12 Ostriche</span><span data-lang="de">12 Austern</span><span data-lang="es">12 Ostras</span></span><span class="item-price">€22.50</span></div>
+          <div class="menu-item" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="item-name" style="font-size:.93rem;"><span data-lang="en">Whelks</span><span data-lang="fr">Bulots</span><span data-lang="it">Lumache di Mare</span><span data-lang="de">Wellhornschnecken</span><span data-lang="es">Caracoles de Mar</span></span><span class="item-price">€13.50</span></div>
+          <div class="menu-item" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="item-name" style="font-size:.93rem;"><span data-lang="en">Clams Garlic Cream</span><span data-lang="fr">Tellines Crème d'Ail</span><span data-lang="it">Vongole Crema d'Aglio</span><span data-lang="de">Muscheln Knoblauchsahne</span><span data-lang="es">Almejas Crema de Ajo</span></span><span class="item-price">€16.00</span></div>
+          <div class="menu-item" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="item-name" style="font-size:.93rem;"><span data-lang="en">Shrimp Bouquet</span><span data-lang="fr">Bouquet de Crevettes</span><span data-lang="it">Bouquet di Gamberi</span><span data-lang="de">Garnelen-Bouquet</span><span data-lang="es">Bouquet de Gambas</span></span><span class="item-price">€16.00</span></div>
+          <div class="menu-item" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="item-name" style="font-size:.93rem;"><span data-lang="en">Baked Mussels</span><span data-lang="fr">Moules Gratinées</span><span data-lang="it">Cozze Gratinate</span><span data-lang="de">Überbackene Muscheln</span><span data-lang="es">Mejillones Gratinados</span></span><span class="item-price">€16.50</span></div>
+          <div class="menu-item" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="item-name" style="font-size:.93rem;"><span data-lang="en">Grilled King Prawns</span><span data-lang="fr">Gambas du Chef Grillées</span><span data-lang="it">Gamberi Reali Griglia</span><span data-lang="de">Gegrillte Gambas</span><span data-lang="es">Gambas Reales a la Plancha</span></span><span class="item-price">€25.50</span></div>
+          <div class="menu-item" style="flex-direction:column;align-items:flex-start;gap:2px;"><span class="item-name" style="font-size:.93rem;"><span data-lang="en">Whole Grilled Lobster</span><span data-lang="fr">Homard Entier Grillé</span><span data-lang="it">Aragosta Intera Griglia</span><span data-lang="de">Ganzer Gegrillter Hummer</span><span data-lang="es">Langosta Entera a la Plancha</span></span><span class="item-price">€23.00</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave divider -->
+  <div class="wave-sep">
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 16 C180 32 360 0 540 16 C720 32 900 0 1080 16 C1260 32 1440 0 1440 16 L1440 32 L0 32 Z" fill="rgba(126,200,227,0.07)"/>
+      <path d="M0 20 C180 36 360 4 540 20 C720 36 900 4 1080 20 C1260 36 1440 4 1440 20" stroke="rgba(126,200,227,0.12)" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+  <div class="marine-row">🦑 🦪 🌊 🦞 🌊 🦪 🦑</div>
+
+  <!-- ═══ PLATTERS ═══ -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-sub">· Plateaux ·</p>
+      <h2 class="section-title">
+        <span data-lang="en">Seafood Platters</span><span data-lang="fr">Plateaux de Fruits de Mer</span>
+        <span data-lang="it">Plateau di Frutti di Mare</span><span data-lang="de">Meeresfrüchte-Plateaus</span>
+        <span data-lang="es">Plateau de Mariscos</span>
+      </h2>
+    </div>
+    <div class="platters-grid">
+      <div class="platter-card"><div class="platter-body"><div class="platter-price-badge">€70</div>
+        <div class="platter-name"><span data-lang="en">Imperial Plateau</span><span data-lang="fr">Plateau Impérial</span><span data-lang="it">Plateau Imperiale</span><span data-lang="de">Imperiales Plateau</span><span data-lang="es">Plateau Imperial</span></div>
+        <p class="platter-desc"><span data-lang="en">14 oysters, 12 mussels, 10 whelks, 10 shrimp, 1 lobster 300–400g, clams</span><span data-lang="fr">14 huîtres, 12 moules, 10 bulots, 10 crevettes, 1 homard 300–400g, tellines</span><span data-lang="it">14 ostriche, 12 cozze, 10 lumache, 10 gamberi, 1 aragosta 300–400g, vongole</span><span data-lang="de">14 Austern, 12 Muscheln, 10 Wellhornschnecken, 10 Garnelen, 1 Hummer 300–400g, Venusmuscheln</span><span data-lang="es">14 ostras, 12 mejillones, 10 caracoles, 10 gambas, 1 langosta 300–400g, almejas</span></p>
+      </div></div>
+      <div class="platter-card"><div class="platter-body"><div class="platter-price-badge">€55</div>
+        <div class="platter-name"><span data-lang="en">Royal Plateau</span><span data-lang="fr">Plateau Royal</span><span data-lang="it">Plateau Reale</span><span data-lang="de">Royales Plateau</span><span data-lang="es">Plateau Real</span></div>
+        <p class="platter-desc"><span data-lang="en">12 oysters, 10 mussels, 10 whelks, 10 shrimp, 1 lobster ~300g, clams</span><span data-lang="fr">12 huîtres, 10 moules, 10 bulots, 10 crevettes, 1 homard ~300g, tellines</span><span data-lang="it">12 ostriche, 10 cozze, 10 lumache, 10 gamberi, 1 aragosta ~300g, vongole</span><span data-lang="de">12 Austern, 10 Muscheln, 10 Wellhornschnecken, 10 Garnelen, 1 Hummer ~300g, Venusmuscheln</span><span data-lang="es">12 ostras, 10 mejillones, 10 caracoles, 10 gambas, 1 langosta ~300g, almejas</span></p>
+      </div></div>
+      <div class="platter-card"><div class="platter-body"><div class="platter-price-badge">€44</div>
+        <div class="platter-name"><span data-lang="en">Mixed Plateau</span><span data-lang="fr">Plateau Panaché</span><span data-lang="it">Plateau Misto</span><span data-lang="de">Gemischtes Plateau</span><span data-lang="es">Plateau Mixto</span></div>
+        <p class="platter-desc"><span data-lang="en">10 oysters, 10 mussels, 8 whelks, 8 shrimp, clams</span><span data-lang="fr">10 huîtres, 10 moules, 8 bulots, 8 crevettes, tellines</span><span data-lang="it">10 ostriche, 10 cozze, 8 lumache, 8 gamberi, vongole</span><span data-lang="de">10 Austern, 10 Muscheln, 8 Wellhornschnecken, 8 Garnelen, Venusmuscheln</span><span data-lang="es">10 ostras, 10 mejillones, 8 caracoles, 8 gambas, almejas</span></p>
+      </div></div>
+      <div class="platter-card"><div class="platter-body"><div class="platter-price-badge">€32.50</div>
+        <div class="platter-name"><span data-lang="en">Le Petit Plateau</span><span data-lang="fr">Le Petit Plateau</span><span data-lang="it">Piccolo Plateau</span><span data-lang="de">Kleines Plateau</span><span data-lang="es">Pequeño Plateau</span></div>
+        <p class="platter-desc"><span data-lang="en">6 oysters, 6 mussels, 6 shrimp, 6 whelks, clams</span><span data-lang="fr">6 huîtres, 6 moules, 6 crevettes, 6 bulots, tellines</span><span data-lang="it">6 ostriche, 6 cozze, 6 gamberi, 6 lumache, vongole</span><span data-lang="de">6 Austern, 6 Muscheln, 6 Garnelen, 6 Wellhornschnecken, Venusmuscheln</span><span data-lang="es">6 ostras, 6 mejillones, 6 gambas, 6 caracoles, almejas</span></p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- Wave divider -->
+  <div class="wave-sep">
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 16 C180 0 360 32 540 16 C720 0 900 32 1080 16 C1260 0 1440 32 1440 16 L1440 32 L0 32 Z" fill="rgba(126,200,227,0.06)"/>
+      <path d="M0 12 C180 -4 360 28 540 12 C720 -4 900 28 1080 12 C1260 -4 1440 28 1440 12" stroke="rgba(201,168,76,0.1)" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- ═══ SET MENUS ═══ -->
+  <section class="section dark-band">
+    <div class="section-header">
+      <p class="section-sub">· Menus ·</p>
+      <h2 class="section-title">
+        <span data-lang="en">Set Menus</span><span data-lang="fr">Nos Menus</span>
+        <span data-lang="it">Menu Fissi</span><span data-lang="de">Menüs</span>
+        <span data-lang="es">Menús</span>
+      </h2>
+    </div>
+    <div class="two-col">
+      <div class="set-menu-card">
+        <div class="set-img"><img src="https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=800&q=80" alt="Menu">
+          <div class="set-img-overlay">
+            <div class="set-price-tag">€26.90</div>
+            <div class="set-menu-name">Les Flots Bleus Menu</div>
+          </div>
+        </div>
+        <div class="set-body">
+          <p class="set-note">
+            <span data-lang="en">Choice of: Starter + Main | or Main + Dessert</span>
+            <span data-lang="fr">Entrée + Plat ou Plat + Dessert</span>
+            <span data-lang="it">A scelta: Antipasto + Secondo | o Secondo + Dolce</span>
+            <span data-lang="de">Wahl: Vorspeise + Hauptgang | oder Hauptgang + Dessert</span>
+            <span data-lang="es">Elección: Entrante + Plato | o Plato + Postre</span>
+          </p>
+          <div class="set-section-label"><span data-lang="en">Starters</span><span data-lang="fr">Entrées</span><span data-lang="it">Antipasti</span><span data-lang="de">Vorspeisen</span><span data-lang="es">Entrantes</span></div>
+          <ul class="set-items">
+            <li><span data-lang="en">Grilled Calamari</span><span data-lang="fr">Calamars à la Plancha</span><span data-lang="it">Calamari alla Griglia</span><span data-lang="de">Gegrillte Tintenfischringe</span><span data-lang="es">Calamares a la Plancha</span></li>
+            <li><span data-lang="en">Grilled Baby Squid</span><span data-lang="fr">Soupions à la Plancha</span><span data-lang="it">Seppioline alla Griglia</span><span data-lang="de">Gegrillte Sepien</span><span data-lang="es">Chopitos a la Plancha</span></li>
+            <li><span data-lang="en">Shrimp Bouquet</span><span data-lang="fr">Bouquet de Crevettes</span><span data-lang="it">Bouquet di Gamberi</span><span data-lang="de">Garnelen-Bouquet</span><span data-lang="es">Bouquet de Gambas</span></li>
+            <li><span data-lang="en">Camargue Salad</span><span data-lang="fr">Salade Camarguaise</span><span data-lang="it">Insalata della Camargue</span><span data-lang="de">Camargue-Salat</span><span data-lang="es">Ensalada de la Camarga</span></li>
+          </ul>
+          <div class="set-section-label"><span data-lang="en">Mains</span><span data-lang="fr">Plats</span><span data-lang="it">Secondi</span><span data-lang="de">Hauptgerichte</span><span data-lang="es">Platos</span></div>
+          <ul class="set-items">
+            <li><span data-lang="en">Grilled Sea Bass</span><span data-lang="fr">Loup Grillé</span><span data-lang="it">Branzino alla Griglia</span><span data-lang="de">Gegrillter Wolfsbarsch</span><span data-lang="es">Lubina a la Plancha</span></li>
+            <li><span data-lang="en">Entrecôte Steak</span><span data-lang="fr">Entrecôte</span><span data-lang="it">Entrecote</span><span data-lang="de">Entrecôte</span><span data-lang="es">Entrecot</span></li>
+            <li><span data-lang="en">Bull Stew</span><span data-lang="fr">Gardianne de Taureau</span><span data-lang="it">Spezzatino di Toro</span><span data-lang="de">Stier-Eintopf</span><span data-lang="es">Estofado de Toro</span></li>
+            <li><span data-lang="en">Grilled Fish Skewer</span><span data-lang="fr">Brochette de Poissons</span><span data-lang="it">Spiedino di Pesce</span><span data-lang="de">Gegrillter Fischspieß</span><span data-lang="es">Brocheta de Pescado</span></li>
+          </ul>
+          <div class="set-section-label"><span data-lang="en">Desserts</span><span data-lang="fr">Desserts</span><span data-lang="it">Dolci</span><span data-lang="de">Desserts</span><span data-lang="es">Postres</span></div>
+          <ul class="set-items">
+            <li><span data-lang="en">Caramel Cream</span><span data-lang="fr">Crème Caramel</span><span data-lang="it">Crema Caramello</span><span data-lang="de">Karamellcreme</span><span data-lang="es">Crema Caramelo</span></li>
+            <li><span data-lang="en">Chocolate Mousse</span><span data-lang="fr">Mousse au Chocolat</span><span data-lang="it">Mousse al Cioccolato</span><span data-lang="de">Schokoladenmousse</span><span data-lang="es">Mousse de Chocolate</span></li>
+            <li><span data-lang="en">Lemon Meringue Tart</span><span data-lang="fr">Tarte Citron Meringuée</span><span data-lang="it">Crostata al Limone Meringata</span><span data-lang="de">Zitronen-Baiser-Tarte</span><span data-lang="es">Tarta de Limón Merengada</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="set-menu-card">
+        <div class="set-img"><img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80" alt="Sea Menu">
+          <div class="set-img-overlay">
+            <div class="set-price-tag">€28.50</div>
+            <div class="set-menu-name"><span data-lang="en">Sea Menu</span><span data-lang="fr">Menu de la Mer</span><span data-lang="it">Menu del Mare</span><span data-lang="de">Meeresmenü</span><span data-lang="es">Menú del Mar</span></div>
+          </div>
+        </div>
+        <div class="set-body">
+          <div class="set-section-label"><span data-lang="en">Starters</span><span data-lang="fr">Entrées</span><span data-lang="it">Antipasti</span><span data-lang="de">Vorspeisen</span><span data-lang="es">Entrantes</span></div>
+          <ul class="set-items">
+            <li><span data-lang="en">Warm Clams with Garlic Cream</span><span data-lang="fr">Tellines Chaudes à la Crème d'Ail</span><span data-lang="it">Vongole Calde alla Crema d'Aglio</span><span data-lang="de">Warme Muscheln in Knoblauchsahne</span><span data-lang="es">Almejas Calientes a la Crema de Ajo</span></li>
+            <li><span data-lang="en">Baked Mussels</span><span data-lang="fr">Moules Gratinées</span><span data-lang="it">Cozze Gratinate</span><span data-lang="de">Überbackene Muscheln</span><span data-lang="es">Mejillones Gratinados</span></li>
+            <li><span data-lang="en">Baked Scallops</span><span data-lang="fr">Coquilles St-Jacques Gratinées</span><span data-lang="it">Capesante Gratinate</span><span data-lang="de">Überbackene Jakobsmuscheln</span><span data-lang="es">Vieiras Gratinadas</span></li>
+            <li><span data-lang="en">Seafood Salad</span><span data-lang="fr">Salade de Fruits de Mer</span><span data-lang="it">Insalata di Mare</span><span data-lang="de">Meeresfrüchte-Salat</span><span data-lang="es">Ensalada de Mariscos</span></li>
+          </ul>
+          <div class="set-section-label"><span data-lang="en">Mains</span><span data-lang="fr">Plats</span><span data-lang="it">Secondi</span><span data-lang="de">Hauptgerichte</span><span data-lang="es">Platos</span></div>
+          <ul class="set-items">
+            <li><span data-lang="en">Grilled Sea Bass</span><span data-lang="fr">Loup Grillé à la Plancha</span><span data-lang="it">Branzino alla Griglia</span><span data-lang="de">Gegrillter Wolfsbarsch</span><span data-lang="es">Lubina a la Plancha</span></li>
+            <li><span data-lang="en">Grilled Sea Bream</span><span data-lang="fr">Daurade Grillée à la Plancha</span><span data-lang="it">Orata alla Griglia</span><span data-lang="de">Gegrillte Dorade</span><span data-lang="es">Dorada a la Plancha</span></li>
+            <li><span data-lang="en">Grilled Cuttlefish</span><span data-lang="fr">Seiche Grillée à la Plancha</span><span data-lang="it">Seppie alla Griglia</span><span data-lang="de">Gegrillter Tintenfisch</span><span data-lang="es">Sepia a la Plancha</span></li>
+            <li><span data-lang="en">Grilled Red Mullet Fillet</span><span data-lang="fr">Filet de Rouget à la Plancha</span><span data-lang="it">Filetto di Triglia alla Griglia</span><span data-lang="de">Gegrilltes Rotbarbenfilet</span><span data-lang="es">Filete de Salmonete a la Plancha</span></li>
+          </ul>
+          <div class="set-section-label"><span data-lang="en">Desserts</span><span data-lang="fr">Desserts</span><span data-lang="it">Dolci</span><span data-lang="de">Desserts</span><span data-lang="es">Postres</span></div>
+          <ul class="set-items">
+            <li><span data-lang="en">Lemon Meringue Tart</span><span data-lang="fr">Tarte Citron Meringuée</span><span data-lang="it">Crostata al Limone Meringata</span><span data-lang="de">Zitronen-Baiser-Tarte</span><span data-lang="es">Tarta de Limón Merengada</span></li>
+            <li><span data-lang="en">Nougat</span><span data-lang="fr">Nougat</span><span data-lang="it">Torrone</span><span data-lang="de">Nougat</span><span data-lang="es">Turrón</span></li>
+            <li><span data-lang="en">Chocolate Fondant</span><span data-lang="fr">Fondant au Chocolat</span><span data-lang="it">Fondente al Cioccolato</span><span data-lang="de">Schokoladenfondant</span><span data-lang="es">Fondant de Chocolate</span></li>
+            <li><span data-lang="en">or Cheese</span><span data-lang="fr">ou Fromage</span><span data-lang="it">o Formaggio</span><span data-lang="de">oder Käse</span><span data-lang="es">o Queso</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave divider -->
+  <div class="wave-sep">
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 16 C180 32 360 0 540 16 C720 32 900 0 1080 16 C1260 32 1440 0 1440 16 L1440 32 L0 32 Z" fill="rgba(126,200,227,0.07)"/>
+    </svg>
+  </div>
+  <div class="marine-row">🐚 ⚓ 🌊 ⚓ 🐚</div>
+
+  <!-- ═══ SPECIALITIES + KIDS ═══ -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-sub">· Spécialités ·</p>
+      <h2 class="section-title">
+        <span data-lang="en">House Specialities</span><span data-lang="fr">Nos Spécialités Maison</span>
+        <span data-lang="it">Specialità della Casa</span><span data-lang="de">Hausspezialitäten</span>
+        <span data-lang="es">Especialidades de la Casa</span>
+      </h2>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-img-header">
+          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=80" alt="Specialities">
+          <div class="img-label">
+            <div class="card-title">🔥
+              <span data-lang="en">Our Specialities</span><span data-lang="fr">Nos Spécialités</span>
+              <span data-lang="it">Le Nostre Specialità</span><span data-lang="de">Unsere Spezialitäten</span>
+              <span data-lang="es">Nuestras Especialidades</span>
+            </div>
+          </div>
+        </div>
+        <div class="specialty-item"><div>
+          <div class="specialty-name"><span data-lang="en">Seafood Grill</span><span data-lang="fr">Parrillada de Fruits de Mer</span><span data-lang="it">Grigliata di Mare</span><span data-lang="de">Meeresfrüchte-Grill</span><span data-lang="es">Parrillada de Mariscos</span></div>
+          <div class="specialty-desc"><span data-lang="en">Baby squid, cuttlefish, calamari, gambas, mussels, razor clams, rice + vegetables</span><span data-lang="fr">Soupion, seiches, calamars, gambas, moules, couteaux, riz + légumes</span><span data-lang="it">Seppioline, seppie, calamari, gamberi, cozze, cannolicchi, riso + verdure</span><span data-lang="de">Sepien, Tintenfisch, Calamari, Gambas, Muscheln, Schwertmuscheln, Reis + Gemüse</span><span data-lang="es">Chopitos, sepia, calamares, gambas, mejillones, navajas, arroz + verduras</span></div>
+        </div><div class="specialty-price">€25.90</div></div>
+
+        <div class="specialty-item"><div>
+          <div class="specialty-name"><span data-lang="en">Fish Grill</span><span data-lang="fr">Parrillada de Poissons</span><span data-lang="it">Grigliata di Pesce</span><span data-lang="de">Fisch-Grill</span><span data-lang="es">Parrillada de Pescado</span></div>
+          <div class="specialty-desc"><span data-lang="en">Red mullet, sea bream fillet, tuna steak, gambas, mussels, shrimp, rice + vegetables</span><span data-lang="fr">Filet de rouget, filet de daurade, steak de thon, gambas, moules, crevettes, riz + légumes</span><span data-lang="it">Triglia, filetto di orata, bistecca di tonno, gamberi, cozze, gamberetti, riso + verdure</span><span data-lang="de">Rotbarbe, Doradenfilet, Thunfischsteak, Gambas, Muscheln, Garnelen, Reis + Gemüse</span><span data-lang="es">Salmonete, filete de dorada, filete de atún, gambas, mejillones, camarones, arroz + verduras</span></div>
+        </div><div class="specialty-price">€26.90</div></div>
+
+        <div class="specialty-item"><div>
+          <div class="specialty-name"><span data-lang="en">Meat Grill</span><span data-lang="fr">Parrillada de Viandes</span><span data-lang="it">Grigliata di Carne</span><span data-lang="de">Fleisch-Grill</span><span data-lang="es">Parrillada de Carnes</span></div>
+          <div class="specialty-desc"><span data-lang="en">Bull, beef, duck breast, fries + salad</span><span data-lang="fr">Taureau, bœuf, magret, frites + salade</span><span data-lang="it">Toro, manzo, petto d'anatra, patatine + insalata</span><span data-lang="de">Stier, Rind, Entenbrust, Pommes + Salat</span><span data-lang="es">Toro, ternera, magret de pato, patatas fritas + ensalada</span></div>
+        </div><div class="specialty-price">€23.50</div></div>
+
+        <div class="specialty-item"><div>
+          <div class="specialty-name"><span data-lang="en">Baked Scallops</span><span data-lang="fr">Coquilles St-Jacques Gratinées</span><span data-lang="it">Capesante Gratinate</span><span data-lang="de">Überbackene Jakobsmuscheln</span><span data-lang="es">Vieiras Gratinadas</span></div>
+          <div class="specialty-desc"><span data-lang="en">Garlic, parsley, cream, Champagne</span><span data-lang="fr">Ail, persil, crème, Champagne</span><span data-lang="it">Aglio, prezzemolo, panna, Champagne</span><span data-lang="de">Knoblauch, Petersilie, Sahne, Champagner</span><span data-lang="es">Ajo, perejil, nata, Champán</span></div>
+        </div><div class="specialty-price">€23.50</div></div>
+      </div>
+
+      <div class="kids-card">
+        <div class="kids-body">
+          <div class="kids-price">€11.00</div>
+          <div class="kids-title"><span data-lang="en">Kids Menu</span><span data-lang="fr">Menu Enfant</span><span data-lang="it">Menu Bambini</span><span data-lang="de">Kindermenü</span><span data-lang="es">Menú Infantil</span></div>
+          <div class="kids-age"><span data-lang="en">Under 12 years old</span><span data-lang="fr">Moins de 12 ans</span><span data-lang="it">Sotto i 12 anni</span><span data-lang="de">Unter 12 Jahren</span><span data-lang="es">Menores de 12 años</span></div>
+          <div class="set-section-label"><span data-lang="en">Main</span><span data-lang="fr">Plat</span><span data-lang="it">Secondo</span><span data-lang="de">Hauptgang</span><span data-lang="es">Plato</span></div>
+          <ul class="set-items">
+            <li><span data-lang="en">Steak &amp; Fries</span><span data-lang="fr">Steak &amp; Frites</span><span data-lang="it">Bistecca e Patatine</span><span data-lang="de">Steak &amp; Pommes</span><span data-lang="es">Filete &amp; Patatas Fritas</span></li>
+            <li><span data-lang="en">Chicken Nuggets &amp; Fries</span><span data-lang="fr">Nuggets de Poulet &amp; Frites</span><span data-lang="it">Nuggets di Pollo e Patatine</span><span data-lang="de">Hähnchen-Nuggets &amp; Pommes</span><span data-lang="es">Nuggets de Pollo &amp; Patatas Fritas</span></li>
+            <li><span data-lang="en">Fish Fillet &amp; Fries</span><span data-lang="fr">Filet de Poisson &amp; Frites</span><span data-lang="it">Filetto di Pesce e Patatine</span><span data-lang="de">Fischfilet &amp; Pommes</span><span data-lang="es">Filete de Pescado &amp; Patatas Fritas</span></li>
+          </ul>
+          <div class="set-section-label"><span data-lang="en">Dessert</span><span data-lang="fr">Dessert</span><span data-lang="it">Dolce</span><span data-lang="de">Dessert</span><span data-lang="es">Postre</span></div>
+          <ul class="set-items">
+            <li><span data-lang="en">One Scoop Ice Cream</span><span data-lang="fr">Glace ou Fromage Blanc</span><span data-lang="it">Una Pallina di Gelato</span><span data-lang="de">Eine Kugel Eis</span><span data-lang="es">Una Bola de Helado</span></li>
+            <li><span data-lang="en">or Cottage Cheese</span><span data-lang="fr">ou Fromage Blanc</span><span data-lang="it">o Fiocchi di Latte</span><span data-lang="de">oder Hüttenkäse</span><span data-lang="es">o Requesón</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave divider -->
+  <div class="wave-sep">
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 16 C180 32 360 0 540 16 C720 32 900 0 1080 16 C1260 32 1440 0 1440 16 L1440 32 L0 32 Z" fill="rgba(126,200,227,0.07)"/>
+    </svg>
+  </div>
+  <div class="marine-row">🍦 🍮 🍷 ☕ 🍦 🍮 🍷</div>
+
+  <!-- ═══ DESSERTS ═══ -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-sub">· Sucreries ·</p>
+      <h2 class="section-title">
+        <span data-lang="en">Desserts</span><span data-lang="fr">Nos Desserts</span>
+        <span data-lang="it">Dolci</span><span data-lang="de">Desserts</span>
+        <span data-lang="es">Postres</span>
+      </h2>
+    </div>
+    <div class="two-col">
+
+      <!-- DESSERTS LIST -->
+      <div class="card">
+        <div class="card-img-header">
+          <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=700&q=80" alt="Desserts">
+          <div class="img-label">
+            <div class="card-title">🍮
+              <span data-lang="en">Our Desserts</span><span data-lang="fr">Nos Desserts</span>
+              <span data-lang="it">I Nostri Dolci</span><span data-lang="de">Unsere Desserts</span>
+              <span data-lang="es">Nuestros Postres</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Cheese Platter</span><span data-lang="fr">Assiette de Fromage</span>
+          <span data-lang="it">Piatto di Formaggi</span><span data-lang="de">Käseteller</span>
+          <span data-lang="es">Tabla de Quesos</span>
+        </span></div><span class="item-price">€7.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Cottage Cheese</span><span data-lang="fr">Fromage Blanc</span>
+          <span data-lang="it">Fiocchi di Latte</span><span data-lang="de">Frischkäse</span>
+          <span data-lang="es">Queso Fresco</span>
+        </span></div><span class="item-price">€6.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Floating Island</span><span data-lang="fr">Île Flottante</span>
+          <span data-lang="it">Isola Galleggiante</span><span data-lang="de">Schwimmende Insel</span>
+          <span data-lang="es">Isla Flotante</span>
+        </span></div><span class="item-price">€6.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Chocolate Cake</span><span data-lang="fr">Gâteau au Chocolat</span>
+          <span data-lang="it">Torta al Cioccolato</span><span data-lang="de">Schokoladenkuchen</span>
+          <span data-lang="es">Pastel de Chocolate</span>
+        </span></div><span class="item-price">€7.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Crème Caramel</span><span data-lang="fr">Crème Caramel</span>
+          <span data-lang="it">Crema Caramello</span><span data-lang="de">Karamellcreme</span>
+          <span data-lang="es">Crema Caramelo</span>
+        </span></div><span class="item-price">€6.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Iced Nougat</span><span data-lang="fr">Nougat Glacé</span>
+          <span data-lang="it">Torrone Gelato</span><span data-lang="de">Eisnougat</span>
+          <span data-lang="es">Turrón Helado</span>
+        </span></div><span class="item-price">€6.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Lemon Meringue Tart</span><span data-lang="fr">Tarte Citron Meringuée</span>
+          <span data-lang="it">Crostata al Limone Meringata</span><span data-lang="de">Zitronen-Baiser-Tarte</span>
+          <span data-lang="es">Tarta de Limón Merengada</span>
+        </span></div><span class="item-price">€7.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Gourmet Coffee</span><span data-lang="fr">Café Gourmand</span>
+          <span data-lang="it">Caffè Gourmand</span><span data-lang="de">Gourmand-Kaffee</span>
+          <span data-lang="es">Café Gourmand</span>
+        </span></div><span class="item-price">€10.00</span></div>
+      </div>
+
+      <!-- ICE CREAM -->
+      <div class="card">
+        <div class="card-img-header">
+          <img src="https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=700&q=80" alt="Ice Cream">
+          <div class="img-label">
+            <div class="card-title">🍦
+              <span data-lang="en">Our Ice Creams</span><span data-lang="fr">Nos Glaces</span>
+              <span data-lang="it">I Nostri Gelati</span><span data-lang="de">Unsere Eisspezialitäten</span>
+              <span data-lang="es">Nuestros Helados</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">1 Scoop</span><span data-lang="fr">1 Boule</span>
+          <span data-lang="it">1 Pallina</span><span data-lang="de">1 Kugel</span>
+          <span data-lang="es">1 Bola</span>
+        </span></div><span class="item-price">€2.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">2 Scoops</span><span data-lang="fr">2 Boules</span>
+          <span data-lang="it">2 Palline</span><span data-lang="de">2 Kugeln</span>
+          <span data-lang="es">2 Bolas</span>
+        </span></div><span class="item-price">€4.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">3 Scoops</span><span data-lang="fr">3 Boules</span>
+          <span data-lang="it">3 Palline</span><span data-lang="de">3 Kugeln</span>
+          <span data-lang="es">3 Bolas</span>
+        </span></div><span class="item-price">€6.50</span></div>
+
+        <div class="menu-item"><div>
+          <span class="item-name" style="font-size:.8rem;color:rgba(200,234,245,.55);">
+            <span data-lang="en">Flavours</span><span data-lang="fr">Les Parfums</span>
+            <span data-lang="it">Gusti</span><span data-lang="de">Geschmacksrichtungen</span>
+            <span data-lang="es">Sabores</span>
+          </span>
+          <span class="item-desc">Vanille, chocolat, fraise, café, pistache, citron, cassis, rhum, raisin</span>
+        </div></div>
+
+        <div class="menu-item"><div><span class="item-name">La Poire Belle Hélène</span>
+          <span class="item-desc"><span data-lang="en">Vanilla ice cream, pear in syrup, melted chocolate, whipped cream</span><span data-lang="fr">Glaces vanille chocolat, poire au sirop, chocolat fondu, chantilly</span><span data-lang="it">Gelato vaniglia cioccolato, pera sciroppata, cioccolato fuso, panna</span><span data-lang="de">Vanille-Schokoladeneis, Birne in Sirup, geschmolzene Schokolade, Sahne</span><span data-lang="es">Helado vainilla chocolate, pera en almíbar, chocolate fundido, nata</span></span>
+        </div><span class="item-price">€8.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">La Pêche Melba</span>
+          <span class="item-desc"><span data-lang="en">Vanilla strawberry ice cream, peach in syrup, red fruit sauce, whipped cream</span><span data-lang="fr">Glaces vanille fraise, pêche au sirop, sauce aux fruits rouges, chantilly</span><span data-lang="it">Gelato vaniglia fragola, pesca sciroppata, salsa frutti rossi, panna</span><span data-lang="de">Vanille-Erdbeereis, Pfirsich in Sirup, Beerensoße, Sahne</span><span data-lang="es">Helado vainilla fresa, melocotón en almíbar, salsa de frutos rojos, nata</span></span>
+        </div><span class="item-price">€8.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">La Dame Blanche</span>
+          <span class="item-desc"><span data-lang="en">Vanilla ice cream, melted chocolate, whipped cream</span><span data-lang="fr">Glaces vanille, chocolat fondu, chantilly</span><span data-lang="it">Gelato vaniglia, cioccolato fuso, panna</span><span data-lang="de">Vanilleeis, geschmolzene Schokolade, Sahne</span><span data-lang="es">Helado vainilla, chocolate fundido, nata</span></span>
+        </div><span class="item-price">€8.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">Le Café Liégeois</span>
+          <span class="item-desc"><span data-lang="en">Vanilla coffee ice cream, coffee, whipped cream</span><span data-lang="fr">Glaces vanille café, café, chantilly</span><span data-lang="it">Gelato vaniglia caffè, caffè, panna</span><span data-lang="de">Vanille-Kaffeeeis, Kaffee, Sahne</span><span data-lang="es">Helado vainilla café, café, nata</span></span>
+        </div><span class="item-price">€8.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">Le Chocolat Liégeois</span>
+          <span class="item-desc"><span data-lang="en">Vanilla chocolate ice cream, chocolate, whipped cream</span><span data-lang="fr">Glaces vanille chocolat, chocolat, chantilly</span><span data-lang="it">Gelato vaniglia cioccolato, cioccolato, panna</span><span data-lang="de">Vanille-Schokoladeneis, Schokolade, Sahne</span><span data-lang="es">Helado vainilla chocolate, chocolate, nata</span></span>
+        </div><span class="item-price">€8.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">Le Colonel</span>
+          <span class="item-desc"><span data-lang="en">Lime ice cream, vodka</span><span data-lang="fr">Glaces citron vert, vodka</span><span data-lang="it">Gelato lime, vodka</span><span data-lang="de">Limetteneis, Wodka</span><span data-lang="es">Helado lima, vodka</span></span>
+        </div><span class="item-price">€9.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">Le Vigneron</span>
+          <span class="item-desc"><span data-lang="en">Blackcurrant ice cream, port wine</span><span data-lang="fr">Glaces cassis, porto</span><span data-lang="it">Gelato ribes nero, porto</span><span data-lang="de">Johannisbeereis, Portwein</span><span data-lang="es">Helado grosella, oporto</span></span>
+        </div><span class="item-price">€9.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Whipped Cream Supplement</span><span data-lang="fr">Supplément Chantilly</span>
+          <span data-lang="it">Supplemento Panna</span><span data-lang="de">Sahne-Zuschlag</span>
+          <span data-lang="es">Suplemento Nata</span>
+        </span></div><span class="item-price">€2.50</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Wave divider -->
+  <div class="wave-sep">
+    <svg viewBox="0 0 1440 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 16 C180 0 360 32 540 16 C720 0 900 32 1080 16 C1260 0 1440 32 1440 16 L1440 32 L0 32 Z" fill="rgba(126,200,227,0.06)"/>
+      <path d="M0 12 C180 -4 360 28 540 12 C720 -4 900 28 1080 12 C1260 -4 1440 28 1440 12" stroke="rgba(201,168,76,0.1)" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+  <div class="marine-row">🍷 🍺 ☕ 🥂 ☕ 🍺 🍷</div>
+
+  <!-- ═══ DRINKS ═══ -->
+  <section class="section dark-band">
+    <div class="section-header">
+      <p class="section-sub">· Boissons ·</p>
+      <h2 class="section-title">
+        <span data-lang="en">Drinks</span><span data-lang="fr">Nos Boissons</span>
+        <span data-lang="it">Bevande</span><span data-lang="de">Getränke</span>
+        <span data-lang="es">Bebidas</span>
+      </h2>
+    </div>
+    <div class="two-col">
+
+      <!-- DRINKS -->
+      <div class="card">
+        <div class="card-title">🥤
+          <span data-lang="en">Soft Drinks &amp; Spirits</span><span data-lang="fr">Boissons &amp; Spiritueux</span>
+          <span data-lang="it">Bevande &amp; Distillati</span><span data-lang="de">Getränke &amp; Spirituosen</span>
+          <span data-lang="es">Bebidas &amp; Espirituosos</span>
+        </div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Badoit, Evian 50cl</span><span data-lang="fr">Badoit, Evian 50cl</span>
+          <span data-lang="it">Badoit, Evian 50cl</span><span data-lang="de">Badoit, Evian 50cl</span>
+          <span data-lang="es">Badoit, Evian 50cl</span>
+        </span></div><span class="item-price">€3.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Badoit, Evian, S.Pellegrino 1L</span><span data-lang="fr">Badoit, Evian, S.Pellegrino 1L</span>
+          <span data-lang="it">Badoit, Evian, S.Pellegrino 1L</span><span data-lang="de">Badoit, Evian, S.Pellegrino 1L</span>
+          <span data-lang="es">Badoit, Evian, S.Pellegrino 1L</span>
+        </span></div><span class="item-price">€6.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Sprite, Orangina, Ice Tea, Coca Cola 33cl</span><span data-lang="fr">Sprite, Orangina, Ice Tea, Coca Cola 33cl</span>
+          <span data-lang="it">Sprite, Orangina, Ice Tea, Coca Cola 33cl</span><span data-lang="de">Sprite, Orangina, Ice Tea, Coca Cola 33cl</span>
+          <span data-lang="es">Sprite, Orangina, Ice Tea, Coca Cola 33cl</span>
+        </span></div><span class="item-price">€3.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Fruit Juice 20cl</span><span data-lang="fr">Jus de Fruit 20cl</span>
+          <span data-lang="it">Succo di Frutta 20cl</span><span data-lang="de">Fruchtsaft 20cl</span>
+          <span data-lang="es">Zumo de Fruta 20cl</span>
+        </span><span class="item-desc">Orange, Apple, Apricot, Pineapple, ACE</span></div><span class="item-price">€3.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Syrup</span><span data-lang="fr">Sirop</span>
+          <span data-lang="it">Sciroppo</span><span data-lang="de">Sirup</span>
+          <span data-lang="es">Jarabe</span>
+        </span></div><span class="item-price">€3.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">Kronenbourg 25cl</span></div><span class="item-price">€4.50</span></div>
+        <div class="menu-item"><div><span class="item-name">Heineken 25cl</span></div><span class="item-price">€4.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Sangria, Muscat, Kir, Martini, Suze, Porto</span><span data-lang="fr">Sangria, Muscat, Kir, Martini, Suze, Porto</span>
+          <span data-lang="it">Sangria, Moscato, Kir, Martini, Suze, Porto</span><span data-lang="de">Sangria, Muskat, Kir, Martini, Suze, Porto</span>
+          <span data-lang="es">Sangría, Moscatel, Kir, Martini, Suze, Oporto</span>
+        </span></div><span class="item-price">€4.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">Ricard, Pastis 51</span></div><span class="item-price">€3.50</span></div>
+        <div class="menu-item"><div><span class="item-name">Whisky</span></div><span class="item-price">€7.00</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Cognac, Get, Calvados, Armagnac, Marc de Provence, Poire</span>
+          <span data-lang="fr">Cognac, Get, Calvados, Armagnac, Marc de Provence, Poire</span>
+          <span data-lang="it">Cognac, Get, Calvados, Armagnac, Marc de Provence, Poire</span>
+          <span data-lang="de">Cognac, Get, Calvados, Armagnac, Marc de Provence, Birnenschnaps</span>
+          <span data-lang="es">Coñac, Get, Calvados, Armagnac, Marc de Provence, Aguardiente de Pera</span>
+        </span></div><span class="item-price">€7.50</span></div>
+
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Champagne (bottle) 75cl</span><span data-lang="fr">Champagne (bouteille) 75cl</span>
+          <span data-lang="it">Champagne (bottiglia) 75cl</span><span data-lang="de">Champagner (Flasche) 75cl</span>
+          <span data-lang="es">Champán (botella) 75cl</span>
+        </span></div><span class="item-price">€55.00</span></div>
+
+        <div class="card-title" style="margin-top:18px;">☕
+          <span data-lang="en">Hot Drinks</span><span data-lang="fr">Boissons Chaudes</span>
+          <span data-lang="it">Bevande Calde</span><span data-lang="de">Warme Getränke</span>
+          <span data-lang="es">Bebidas Calientes</span>
+        </div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Coffee, Espresso</span><span data-lang="fr">Café, Expresso</span>
+          <span data-lang="it">Caffè, Espresso</span><span data-lang="de">Kaffee, Espresso</span>
+          <span data-lang="es">Café, Expreso</span>
+        </span></div><span class="item-price">€2.50</span></div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Noisette</span><span data-lang="fr">Noisette</span>
+          <span data-lang="it">Caffè Macchiato</span><span data-lang="de">Noisette</span>
+          <span data-lang="es">Cortado</span>
+        </span></div><span class="item-price">€2.70</span></div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Decaf</span><span data-lang="fr">Décaféiné</span>
+          <span data-lang="it">Decaffeinato</span><span data-lang="de">Entkoffeinierter Kaffee</span>
+          <span data-lang="es">Descafeinado</span>
+        </span></div><span class="item-price">€2.70</span></div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Large Coffee, Cappuccino</span><span data-lang="fr">Grand Café, Cappuccino</span>
+          <span data-lang="it">Caffè Grande, Cappuccino</span><span data-lang="de">Großer Kaffee, Cappuccino</span>
+          <span data-lang="es">Café Grande, Capuchino</span>
+        </span></div><span class="item-price">€4.00</span></div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Tea, Herbal Tea</span><span data-lang="fr">Thé, Infusion</span>
+          <span data-lang="it">Tè, Tisana</span><span data-lang="de">Tee, Kräutertee</span>
+          <span data-lang="es">Té, Infusión</span>
+        </span></div><span class="item-price">€4.00</span></div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Gourmet Coffee</span><span data-lang="fr">Café Gourmand</span>
+          <span data-lang="it">Caffè Gourmand</span><span data-lang="de">Gourmand-Kaffee</span>
+          <span data-lang="es">Café Gourmand</span>
+        </span></div><span class="item-price">€10.00</span></div>
+      </div>
+
+      <!-- WINES -->
+      <div class="card">
+        <div class="card-title">🍷
+          <span data-lang="en">Our Wines</span><span data-lang="fr">Nos Vins</span>
+          <span data-lang="it">I Nostri Vini</span><span data-lang="de">Unsere Weine</span>
+          <span data-lang="es">Nuestros Vinos</span>
+        </div>
+
+        <div class="menu-item"><div><span class="item-name">IGP Vin des Sables Rosé</span><span class="item-desc">50cl / 75cl</span></div><span class="item-price">€14 / €18.50</span></div>
+        <div class="menu-item"><div><span class="item-name">IGP Vin des Sables Rouge</span><span class="item-desc">50cl / 75cl</span></div><span class="item-price">€14 / €18.50</span></div>
+        <div class="menu-item"><div><span class="item-name">IGP Vin des Sables Blanc</span><span class="item-desc">50cl / 75cl</span></div><span class="item-price">€15 / €19.50</span></div>
+        <div class="menu-item"><div><span class="item-name">AOP Mas de Rey Rouge, Rosé</span><span class="item-desc">50cl / 75cl</span></div><span class="item-price">€15.50 / €20.50</span></div>
+        <div class="menu-item"><div><span class="item-name">AOP Picpoul de Pinet</span><span class="item-desc">75cl</span></div><span class="item-price">€22.90</span></div>
+        <div class="menu-item"><div><span class="item-name">AOP Costière de Nîmes Rouge, Rosé, Blanc</span><span class="item-desc">50cl / 75cl</span></div><span class="item-price">€15 / €19</span></div>
+        <div class="menu-item"><div><span class="item-name">AOP Tavel Rosé</span><span class="item-desc">50cl / 75cl</span></div><span class="item-price">€15.50 / €22.50</span></div>
+        <div class="menu-item"><div><span class="item-name">AOP Rasteau Rouge</span><span class="item-desc">50cl / 75cl</span></div><span class="item-price">€15.50 / €23</span></div>
+        <div class="menu-item"><div><span class="item-name">AOP Puech Rosé</span><span class="item-desc">75cl</span></div><span class="item-price">€28</span></div>
+
+        <div class="card-title" style="margin-top:18px;">🫙
+          <span data-lang="en">Carafes — Gard Country Wines</span><span data-lang="fr">Pichets — Vins du Pays du Gard</span>
+          <span data-lang="it">Caraffe — Vini del Gard</span><span data-lang="de">Karaffen — Weine aus dem Gard</span>
+          <span data-lang="es">Jarras — Vinos del País del Gard</span>
+        </div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Blanc · Rouge · Rosé</span><span data-lang="fr">Blanc · Rouge · Rosé</span>
+          <span data-lang="it">Bianco · Rosso · Rosato</span><span data-lang="de">Weiß · Rot · Rosé</span>
+          <span data-lang="es">Blanco · Tinto · Rosado</span>
+        </span></div></div>
+        <div class="menu-item"><div><span class="item-name">25cl</span></div><span class="item-price">€5.50</span></div>
+        <div class="menu-item"><div><span class="item-name">50cl</span></div><span class="item-price">€9.50</span></div>
+        <div class="menu-item"><div><span class="item-name">75cl</span></div><span class="item-price">€12.50</span></div>
+        <div class="menu-item"><div><span class="item-name">100cl</span></div><span class="item-price">€13.50</span></div>
+
+        <div class="card-title" style="margin-top:18px;">🍹
+          <span data-lang="en">Sangria Carafes</span><span data-lang="fr">Pichets de Sangria</span>
+          <span data-lang="it">Caraffe di Sangria</span><span data-lang="de">Sangria-Karaffen</span>
+          <span data-lang="es">Jarras de Sangría</span>
+        </div>
+        <div class="menu-item"><div><span class="item-name">25cl</span></div><span class="item-price">€5.50</span></div>
+        <div class="menu-item"><div><span class="item-name">50cl</span></div><span class="item-price">€9.50</span></div>
+        <div class="menu-item"><div><span class="item-name">75cl</span></div><span class="item-price">€12.50</span></div>
+        <div class="menu-item"><div><span class="item-name">100cl</span></div><span class="item-price">€13.50</span></div>
+        <div class="menu-item"><div><span class="item-name">
+          <span data-lang="en">Glass</span><span data-lang="fr">Le Verre</span>
+          <span data-lang="it">Il Bicchiere</span><span data-lang="de">Das Glas</span>
+          <span data-lang="es">La Copa</span>
+        </span></div><span class="item-price">€3.00</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="marine-row" style="opacity:.2;font-size:1rem;letter-spacing:.5em;padding-bottom:4px;">🐚 🐟 ⚓ 🦀 ⚓ 🐟 🐚</div>
+    <div class="ornament">〜 🌊 〜</div>
+    <p>
+      <span data-lang="en">All prices in euros · Service included</span>
+      <span data-lang="fr">Tous les prix en euros · Service compris</span>
+      <span data-lang="it">Tutti i prezzi in euro · Servizio incluso</span>
+      <span data-lang="de">Alle Preise in Euro · Service inklusive</span>
+      <span data-lang="es">Todos los precios en euros · Servicio incluido</span>
+    </p>
+  </footer>
+
+</div>
+<script>
+  function setLang(lang) {
+    document.body.className = 'lang-' + lang;
+    document.documentElement.lang = lang;
+    const sel = document.getElementById('lang-select');
+    if (sel) sel.value = lang;
+  }
+</script>
+</body>
+</html>
